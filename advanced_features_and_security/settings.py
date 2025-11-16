@@ -5,16 +5,18 @@ Django settings for advanced_features_and_security project.
 from pathlib import Path
 import os
 
-# Build paths inside the project
+# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-your-secret-key-change-this-in-production'
+SECRET_KEY = 'django-insecure-your-secret-key-here-change-in-production'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
+
 
 # Application definition
 INSTALLED_APPS = [
@@ -24,7 +26,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'accounts',  # Your custom user app
+    'your_app_name',  # Replace with your app name
 ]
 
 MIDDLEWARE = [
@@ -42,7 +44,7 @@ ROOT_URLCONF = 'advanced_features_and_security.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -57,6 +59,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'advanced_features_and_security.wsgi.application'
 
+
 # Database
 DATABASES = {
     'default': {
@@ -64,6 +67,7 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
@@ -81,6 +85,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+
 # Internationalization
 LANGUAGE_CODE = 'en-us'
 
@@ -90,17 +95,33 @@ USE_I18N = True
 
 USE_TZ = True
 
+
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATICFILES_DIRS = [BASE_DIR / 'static']
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-# Media files (User uploads)
+
+# Media files
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_ROOT = BASE_DIR / 'media'
+
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# ===== CUSTOM USER MODEL CONFIGURATION =====
-# This is the critical setting that tells Django to use our custom user model
-AUTH_USER_MODEL = 'accounts.CustomUser'
+
+# ============================================
+# CUSTOM USER MODEL CONFIGURATION
+# ============================================
+# Point Django to use the custom user model
+AUTH_USER_MODEL = 'your_app_name.CustomUser'  # Replace 'your_app_name' with your actual app name
+
+# Authentication backends (optional, but recommended for custom user models)
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+]
+
+# ============================================
+# END CUSTOM USER MODEL CONFIGURATION
+# ============================================

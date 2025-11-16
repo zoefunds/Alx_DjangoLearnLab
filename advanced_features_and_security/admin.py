@@ -1,95 +1,102 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
-from django.utils.html import format_html
+from django.utils.translation import gettext_lazy as _
 from .models import CustomUser
 
 
 class CustomUserAdmin(BaseUserAdmin):
     """
-    Custom admin configuration for the CustomUser model.
+    Custom admin interface for CustomUser model.
     """
     
     # Fields to display in the list view
     list_display = (
         'email',
-        'username',
         'first_name',
         'last_name',
-        'date_of_birth',
         'is_staff',
         'is_active',
-        'profile_photo_preview',
+        'is_email_verified',
         'created_at'
     )
     
-    # Fields to filter by
+    # Fields to search in the admin interface
+    search_fields = ('email', 'first_name', 'last_name', 'phone_number')
+    
+    # Fields to filter in the admin interface
     list_filter = (
         'is_active',
         'is_staff',
         'is_superuser',
+        'is_email_verified',
         'created_at',
-        'date_of_birth',
+        'updated_at'
     )
     
-    # Fields to search by
-    search_fields = (
-        'email',
-        'username',
-        'first_name',
-        'last_name',
-    )
-    
-    # Ordering
+    # Ordering in the list view
     ordering = ('-created_at',)
     
-    # Define fieldsets for add and change forms
+    # Define fieldsets for the change form
     fieldsets = (
-        ('Account Information', {
-            'fields': ('email', 'username', 'password')
+        (None, {'fields': ('email', 'password')}),
+        (_('Personal Information'), {
+            'fields': (
+                'first_name',
+                'last_name',
+                'date_of_birth',
+                'phone_number',
+                'profile_photo',
+                'bio'
+            )
         }),
-        ('Personal Information', {
-            'fields': ('first_name', 'last_name', 'date_of_birth', 'profile_photo')
-        }),
-        ('Permissions', {
-            'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions'),
+        (_('Permissions'), {
+            'fields': (
+                'is_active',
+                'is_staff',
+                'is_superuser',
+                'groups',
+                'user_permissions'
+            ),
             'classes': ('collapse',)
         }),
-        ('Important Dates', {
+        (_('Email Verification'), {
+            'fields': ('is_email_verified',)
+        }),
+        (_('Important Dates'), {
             'fields': ('last_login', 'created_at', 'updated_at'),
             'classes': ('collapse',)
         }),
     )
     
-    # Fieldsets for the add user form
+    # Define fieldsets for the add form
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('email', 'username', 'password1', 'password2'),
+            'fields': ('email', 'password1', 'password2')
         }),
-        ('Personal Information', {
+        (_('Personal Information'), {
             'classes': ('wide',),
-            'fields': ('first_name', 'last_name', 'date_of_birth', 'profile_photo'),
+            'fields': (
+                'first_name',
+                'last_name',
+                'date_of_birth',
+                'phone_number',
+                'profile_photo',
+                'bio'
+            )
         }),
-        ('Permissions', {
+        (_('Permissions'), {
             'classes': ('wide',),
-            'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions'),
+            'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')
         }),
     )
     
-    # Read-only fields
+    # Make these fields read-only
     readonly_fields = ('created_at', 'updated_at', 'last_login')
     
-    def profile_photo_preview(self, obj):
-        """Display profile photo as a thumbnail in the list view."""
-        if obj.profile_photo:
-            return format_html(
-                '<img src="{}" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;" />',
-                obj.profile_photo.url
-            )
-        return 'No photo'
-    
-    profile_photo_preview.short_description = 'Photo'
+    # Filter horizontal for many-to-many fields
+    filter_horizontal = ('groups', 'user_permissions')
 
 
-# Register the custom user model with the admin
+# Register the CustomUser model with the admin
 admin.site.register(CustomUser, CustomUserAdmin)
